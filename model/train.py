@@ -20,12 +20,12 @@ import shutil
 
 device = 'cuda' if cuda_is_available() else 'cpu'
 num_epochs = 10
-batch_size = 4
+batch_size = 5
 
 data_train = CVDataset('/home/denis/code/satellite_hack/', batch_size, True, (256,256))
 data_valid = CVDataset('/home/denis/code/satellite_hack/', batch_size, False, (256,256))
 loader = DataLoader(data_train, batch_size=batch_size, shuffle=False, num_workers=cpu_count(), pin_memory=False)
-weight_loss = [1., 1., 1., 3.]
+weight_loss = [1., 1., 1., 1.]
 
 def visual_graphic(list_res_model):
     '''
@@ -90,7 +90,7 @@ def calculate_valid(model_names, model, data, criterion, score):
             output = output.detach().cpu()
             data.imshow(images[0].detach().cpu(), targets[0].detach().cpu(), output[0].detach().cpu(), f'test{j}')
             val_los += loss.item()
-            val_score_mn, val_score_on = score(output, targets.detach().cpu(), data.class_count)
+            val_score_mn, val_score_on = score(output, targets.detach().cpu())
             val_score_mean += val_score_mn
             val_score_one += val_score_on
     return val_los / batch_size, val_score_mean / batch_size, val_score_one / batch_size
@@ -118,7 +118,7 @@ list_res_model = {}
 
 for model_names in list_model.keys():
     model = list_model[model_names].to(device)
-    criterion = [CrossEntropyLoss(weight=tensor([5., 1.], device=device),reduction='mean') for _ in range(4)]
+    criterion = [CrossEntropyLoss(weight=tensor([1., 1.], device=device),reduction='mean') for _ in range(4)]
     if model_names != 'unetSV++':
         criterion = criterion[0]
     optim = Adam(model.parameters(), lr=3e-4)
@@ -147,7 +147,6 @@ for model_names in list_model.keys():
             if k % 1 == 0:
                 model.eval()
                 val_los, val_score_one, val_score_two = calculate_valid(model_names, model, data_valid, criterion, score)
-                # print(f'\nTrain Loss: {loss.item()}, Val Loss: {val_los}\nVal Mean Score: {val_score_mean}, Val Score 1cl: {val_score_one}')
                 model.train()
                 list_k.append(k)
                 graphic_train_loss.append(loss.item())
