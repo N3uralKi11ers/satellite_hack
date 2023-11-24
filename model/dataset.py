@@ -1,12 +1,15 @@
 from torch.utils.data import Dataset
-from torch import tensor, zeros, float64, float32, long
+from torch import tensor, float32, long
 from pandas import read_csv
 from cv2 import resize, imread, imwrite
 from numpy import array, uint8, zeros as numpy_zeros
 
 class CVDataset(Dataset):
-    def __init__(self, meta_path, matrix_shape=None, transform=None):
-        self.meta = read_csv(meta_path+'metadata.csv')
+    def __init__(self, meta_path, iter, trainer_data, matrix_shape=None, transform=None):
+        if trainer_data:
+            self.meta = read_csv(meta_path+'metadata.csv')[iter:]
+        else:
+            self.meta = read_csv(meta_path+'metadata.csv')[:iter]
         self.meta = self.meta[self.meta['split'] == 'train'].drop('split', axis=1)
         self.meta_path = meta_path
         self.color = read_csv(meta_path+'class_dict.csv')
@@ -56,5 +59,4 @@ class CVDataset(Dataset):
         composite_image[:, :width] = image
         composite_image[:, width:width*2] = target_res
         composite_image[:, width*2:] = output_res
-
         imwrite(f'image_res/{image_name}.jpg', composite_image)

@@ -13,6 +13,5 @@ def IoU_torch(preds, targets, num_classes):
         union[i] = (pred_mask | target_mask).sum().float()
 
     iou = intersection / (union + 1e-6)
-    mean_iou = iou.mean()
 
-    return mean_iou.item(), iou[0]
+    return iou[0].item(), iou[1].item()
