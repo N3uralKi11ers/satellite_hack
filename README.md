@@ -1,6 +1,8 @@
-# PatternCV
+# Хакатон "Цифровой прорыв"
 
-шаблон использования модели для CV задач
+Шаблон использования модели для CV задач
+
+## Видео с демонстрацией
 
 [![video](./project_video/IMAGE.jpg)](https://drive.google.com/file/d/1rEf42Egnifb630dTQsNSsIt_K_xtH-mq/view?usp=sharing)
 
