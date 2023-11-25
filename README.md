@@ -2,7 +2,7 @@
 
 шаблон использования модели для CV задач
 
-[![video](./project_video/IMAGE.jpg)](./project_video/IMG_6727.MOV)
+[![video](./project_video/IMAGE.jpg)](https://drive.google.com/file/d/1rEf42Egnifb630dTQsNSsIt_K_xtH-mq/view?usp=sharing)
 
 ## Полученные маски на тестовом датасете
 
