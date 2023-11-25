@@ -23,8 +23,9 @@ device = 'cuda' if cuda_is_available() else 'cpu'
 num_epochs = 10
 batch_size = 5
 
-data_train = CVInferenceDataset('/home/denis/code/satellite_hack/', 3, True, (256,256))
-data_valid = CVInferenceDataset('/home/denis/code/satellite_hack/', 3, False, (256,256))
+
+data_train = CVInferenceDataset('/home/jupyter/datasphere/project/satellite_hack/', 3, True, (512,512))
+data_valid = CVInferenceDataset('/home/jupyter/datasphere/project/satellite_hack/', 3, False, (512,512))
 loader = DataLoader(data_train, batch_size=batch_size, shuffle=False, num_workers=cpu_count(), pin_memory=False)
 weight_loss = [1., 1., 1., 1.]
 
@@ -77,7 +78,7 @@ def calculate_valid(model_names, model, data, criterion, score):
     val_score_one = 0
     with no_grad():
         for j in range(len(data)):
-            _, images, targets = data[j]
+            images, targets = data[j]
             images = images.unsqueeze(0).to(device)
             targets = targets.unsqueeze(0).to(device)
             output = model(images)
@@ -105,7 +106,7 @@ def clear_cuda_memory():
                 del obj
         except Exception as e:
             pass
-
+    
     gc.collect()
     cuda.empty_cache()
 
@@ -119,7 +120,7 @@ list_res_model = {}
 
 for model_names in list_model.keys():
     model = list_model[model_names].to(device)
-    criterion = [CrossEntropyLoss(weight=tensor([0.1, 1.], device=device),reduction='mean') for _ in range(4)]
+    criterion = [CrossEntropyLoss(weight=tensor([1., 1.], device=device),reduction='mean') for _ in range(4)]
     if model_names != 'unetSV++':
         criterion = criterion[0]
     optim = Adam(model.parameters(), lr=3e-4)
@@ -133,7 +134,7 @@ for model_names in list_model.keys():
         graphic_train_loss = []
         list_k = []
 
-        for k, (index, images, targets) in enumerate(tqdm(loader)):
+        for k, (images, targets) in enumerate(tqdm(loader)):
             images, targets = images.to(device), targets.to(device)
             optim.zero_grad()
             output = model(images)
@@ -145,7 +146,7 @@ for model_names in list_model.keys():
                     loss += criterion[i](output[i], targets) * weight_loss[i]
             loss.backward()
             optim.step()
-            if k % 1 == 0:
+            if k % 20 == 0:
                 model.eval()
                 val_los, val_score_one, val_score_two = calculate_valid(model_names, model, data_valid, criterion, score)
                 model.train()
