@@ -2,6 +2,8 @@
 
 шаблон использования модели для CV задач
 
+[![video](./project_video/IMAGE.jpg)](./project_video/IMG_6727.MOV)
+
 ## Полученные маски на тестовом датасете
 
 ### image 000
